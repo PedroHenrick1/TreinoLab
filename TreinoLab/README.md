@@ -48,3 +48,21 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Dependencias que devem ser instaladas:
+
+```bash
+npm i @expo-google-fonts/jockey-one
+```
+
+```bash
+npm install @react-navigation/native
+```
+
+```bash
+npx expo install react-native-screens react-native-safe-area-context
+```
+
+```bash
+npm install react-native-screens react-native-safe-area-context
+```

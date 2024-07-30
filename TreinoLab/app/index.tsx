@@ -1,10 +1,9 @@
 import { Text, View } from "react-native";
-import Main from "@/components/Main/";
+import Main from "@/components/Main";
 
 export default function Index() {
   return (
-    <View
-    >
+    <View>
       <Main/>
     </View>
   );
