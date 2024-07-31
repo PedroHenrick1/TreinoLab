@@ -5,7 +5,9 @@ import Logo from '@/components/logo';
 import { Picker } from '@react-native-picker/picker'
 import { router } from 'expo-router';
 import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
-
+import uuid from 'react-native-uuid'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message'
 
 
 const CreateUser = () => {
@@ -15,12 +17,38 @@ const CreateUser = () => {
   let [fontsLoaded] = useFonts({
     JockeyOne_400Regular,
   });
-
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
     setShow(false);
     setDate(currentDate);
+    setNasc(currentDate.toLocaleDateString());
   };
+
+  const [name, setName] = useState("");
+  const [nasc, setNasc] = useState("");
+  const [dias, setDias] = useState("");
+  const [peso, setPeso] = useState("");
+
+  const  handleNew = async() => {
+    const id = uuid.v4();
+
+    const newData = {
+      id,
+      name,
+      nasc,
+      dias,
+      peso
+    }
+
+    await AsyncStorage.setItem("@TreinoLab:users", JSON.stringify(newData));
+    Toast.show({
+      type: "success",
+      text1: "Usuário cadastrado com sucesso"
+    })
+
+    console.log(newData);
+    
+  }
 
   function handleNavigate() {
     router.replace('/Principal')
@@ -35,14 +63,18 @@ const CreateUser = () => {
         <View style={styles.container}>
           <Text style={styles.nameLabel}>Digite seu nome</Text>
           <TextInput
-          style={styles.inputLabel} 
-          placeholder='Nome' />
+            style={styles.inputLabel} 
+            placeholder='Nome' 
+            onChangeText={setName}
+            
+          />
           <Text style={styles.nameLabel}>Data de nascimento</Text>
           <TextInput
             style={styles.inputLabel}
             placeholder='Data de nascimento'
-            value={date.toLocaleDateString()}
+            value={nasc}
             onFocus={() => setShow(true)}
+            
           />
           {show && (
             <DateTimePicker
@@ -51,14 +83,14 @@ const CreateUser = () => {
               mode="date"
               display="default"
               onChange={onChange}
+              
             />
           )}
           <Text style={styles.nameLabel}>Quais dias da semana você treina?</Text>
           <Picker
-            selectedValue={selectedLanguage}
+            selectedValue={dias}
             style={styles.selector}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedLanguage(itemValue)
+            onValueChange={(itemValue, itemIndex) => setDias(itemValue)
             }>
             <Picker.Item label="Segunda a Sexta" value="segunda-sexta" />
             <Picker.Item label="Segunda a Sábado" value="segunda-sabado" />
@@ -69,10 +101,11 @@ const CreateUser = () => {
             style={styles.inputLabel}
             placeholder='Ex: 80.5'
             keyboardType='numeric'
+            onChangeText={setPeso}
           />
 
           <View style={styles.btnCreate}>
-            <Button title="Criar Perfil" onPress={handleNavigate} color={'#6AEBAD'}/>
+            <Button title="Criar Perfil" onPress={handleNew} color={'#6AEBAD'}/>
           </View>
 
 
