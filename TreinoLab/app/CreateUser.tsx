@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
 import uuid from 'react-native-uuid'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message'
+import * as Burnt from "burnt";
 
 
 const CreateUser = () => {
@@ -30,23 +30,49 @@ const CreateUser = () => {
   const [peso, setPeso] = useState("");
 
   const  handleNew = async() => {
-    const id = uuid.v4();
+    try {
 
-    const newData = {
-      id,
-      name,
-      nasc,
-      dias,
-      peso
+      const id = uuid.v4();
+
+      const newData = {
+        id,
+        name,
+        nasc,
+        dias,
+        peso
+      }
+
+      await AsyncStorage.setItem("@TreinoLab:users", JSON.stringify(newData));
+
+
+
+      if (newData.name === "" || newData.nasc === "" || newData.dias === "" || newData.peso === "") {
+        Burnt.alert({
+          title: "Ocorreu um erro no cadastro, tente novamente",
+          message: "Tente novamente",
+          preset: "done"
+        });
+      }else {
+        Burnt.alert({
+          title: "Cadastro concluido com sucesso",
+          message: "Ok",
+          preset: "done"
+        });
+        router.push("/Principal");
+      }
+
+      console.log(newData);
     }
 
-    await AsyncStorage.setItem("@TreinoLab:users", JSON.stringify(newData));
-    Toast.show({
-      type: "success",
-      text1: "Usuário cadastrado com sucesso"
-    })
-
-    console.log(newData);
+    catch(error) {
+      console.log(error);
+      
+      Burnt.alert({
+        title: "Ocorreu um erro no cadastro, tente novamente",
+        message: "Tente novamente",
+        preset: "done"
+      });
+    }
     
   }
 

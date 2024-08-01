@@ -31,10 +31,12 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/JockeyOne-Regular.ttf"]
+          "fonts": [
+            "./assets/fonts/JockeyOne-Regular.ttf"
+          ]
         }
-      ]
-
+      ],
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true
