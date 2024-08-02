@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import Logo from '@/components/logo';
@@ -14,15 +14,27 @@ const CreateUser = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [show, setShow] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState();
+
   let [fontsLoaded] = useFonts({
     JockeyOne_400Regular,
   });
+
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
     setShow(false);
     setDate(currentDate);
     setNasc(currentDate.toLocaleDateString());
   };
+
+  const getCliente = async () => {
+    const valor = await AsyncStorage.getItem("@TreinoLab:users");
+    console.log(valor);
+  }
+
+  useEffect(() => {
+    getCliente();
+  },[])
+
 
   const [name, setName] = useState("");
   const [nasc, setNasc] = useState("");
@@ -42,10 +54,6 @@ const CreateUser = () => {
         peso
       }
 
-      await AsyncStorage.setItem("@TreinoLab:users", JSON.stringify(newData));
-
-
-
       if (newData.name === "" || newData.nasc === "" || newData.dias === "" || newData.peso === "") {
         Burnt.alert({
           title: "Ocorreu um erro no cadastro, tente novamente",
@@ -53,6 +61,7 @@ const CreateUser = () => {
           preset: "done"
         });
       }else {
+        await AsyncStorage.setItem("@TreinoLab:users", JSON.stringify(newData));
         Burnt.alert({
           title: "Cadastro concluido com sucesso",
           message: "Ok",
@@ -60,6 +69,7 @@ const CreateUser = () => {
         });
         router.push("/Principal");
       }
+
 
       console.log(newData);
     }
@@ -92,15 +102,14 @@ const CreateUser = () => {
             style={styles.inputLabel} 
             placeholder='Nome' 
             onChangeText={setName}
-            
           />
+
           <Text style={styles.nameLabel}>Data de nascimento</Text>
           <TextInput
             style={styles.inputLabel}
             placeholder='Data de nascimento'
             value={nasc}
             onFocus={() => setShow(true)}
-            
           />
           {show && (
             <DateTimePicker

@@ -7,7 +7,7 @@ import { router } from "expo-router";
 export default function Index() {
   useEffect(() => {
     const checkUser = async () => {
-      const user  = await AsyncStorage.getItem('user');
+      const user  = await AsyncStorage.getItem("@TreinoLab:users");
       console.log(user);
       
       if (user !== null) {
