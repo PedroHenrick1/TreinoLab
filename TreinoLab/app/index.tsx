@@ -11,7 +11,7 @@ export default function Index() {
       console.log(user);
       
       if (user !== null) {
-        router.replace("/Principal");
+        router.replace("/(tabs)");
       }
     }
 

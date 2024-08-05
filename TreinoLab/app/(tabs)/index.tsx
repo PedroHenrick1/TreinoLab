@@ -1,8 +1,9 @@
 import {StyleSheet, View, Text } from "react-native";
-
 import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
+import { NavigationContainer } from '@react-navigation/native';
+import TabRoutes from "../routes";
 
-export default function Title() {
+export default function Principal() {
     let [fontsLoaded] = useFonts({
         JockeyOne_400Regular,
       });
@@ -11,9 +12,11 @@ export default function Title() {
         return
     }else{
         return(
-            <View>
-                <Text style={styles.container}>TreinoLab</Text>
-            </View>
+            <>
+                <NavigationContainer>
+                    <TabRoutes/>
+                </NavigationContainer>
+            </>
         )
     }
     
