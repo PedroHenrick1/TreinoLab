@@ -1,5 +1,5 @@
 import { Text, View, Button, StyleSheet } from 'react-native';
-import Title from '@/components/Title/Title';
+import Title from '@/components/Title';
 import { Link } from "expo-router";
 
 export default function Logo() {

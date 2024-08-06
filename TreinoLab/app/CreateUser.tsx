@@ -67,7 +67,7 @@ const CreateUser = () => {
           message: "Ok",
           preset: "done"
         });
-        router.push("/Principal");
+        router.push("/principal");
       }
 
 
@@ -87,7 +87,7 @@ const CreateUser = () => {
   }
 
   function handleNavigate() {
-    router.replace('/Principal')
+    router.replace('/principal')
   }
 
   if (!fontsLoaded) {

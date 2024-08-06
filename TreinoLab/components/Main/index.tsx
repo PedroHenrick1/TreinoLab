@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, Button, Alert } from "react-native";
-import Title from "../Title/Title";
+import Title from "../Title";
 import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
 import { Link, router } from "expo-router";
 
