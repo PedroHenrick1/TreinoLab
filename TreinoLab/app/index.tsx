@@ -15,7 +15,22 @@ export default function Index() {
       }
     }
 
+    const removeUser = async () => {
+      const remove  = await AsyncStorage.removeItem("@TreinoLab:users")
+    }
+
+    // removeUser();
+
+    const User = async () => {
+      const user  = await AsyncStorage.getItem("@TreinoLab:users");
+      console.log(user);
+    }
+
+    User();
+
+
     checkUser();
+
   }, []);
 
   return (

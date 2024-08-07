@@ -1,26 +1,32 @@
 import {StyleSheet, View, Text, Pressable } from "react-native";
 import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
-import { NavigationContainer } from '@react-navigation/native';
 import Title from "@/components/Title";
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Principal() {
+    const [nome, setNome] = useState("");
+    const [peso, setPeso] = useState("");
+
     let [fontsLoaded] = useFonts({
         JockeyOne_400Regular,
-      });
-
-    const getCliente = async () => {
-        const valor = await AsyncStorage.getItem("@TreinoLab:users");
-        const data = valor ? JSON.parse(valor) : {};
-        console.log(JSON.parse(data));
-    }
+    });
 
     useEffect(() => {
-        getCliente();
+        const fetchData = async () => {
+            try {
+                const valor = await AsyncStorage.getItem("@TreinoLab:users");
+                const data = valor ? JSON.parse(valor) : {};
+                setNome(data.name);
+                setPeso(data.peso);
+            }catch(error) {
+                console.log(error);
+            }
+        }
+        
+        fetchData();
     }, []);
-
 
 
     if (!fontsLoaded) {
@@ -34,8 +40,8 @@ export default function Principal() {
                 </View>
 
                 <View >
-                    <Text style={styles.infos}>Pedro Henrick</Text>
-                    <Text style={styles.infos}>Peso: 80kg</Text>
+                    <Text style={styles.infos}>{nome}</Text>
+                    <Text style={styles.infos}>Peso: {peso}kg</Text>
                 </View>
             </View>
 
