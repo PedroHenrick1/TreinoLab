@@ -1,8 +1,9 @@
 import Logo from "@/components/logo";
-import {StyleSheet, View, Text, TextInput, Pressable } from "react-native";
+import {StyleSheet, View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
+import uuid from 'react-native-uuid'
 
 export default function seusTreinos(){
     let [fontsLoaded] = useFonts({
@@ -12,6 +13,7 @@ export default function seusTreinos(){
     const [series, setSeries] = useState("");
     const [reps, setReps] = useState("");
 
+
     const [treinos, setTreinos] = useState([
         { exec: "", series: "", reps: "" },
       ]);
@@ -20,7 +22,30 @@ export default function seusTreinos(){
         setTreinos([...treinos, { exec: "", series: "", reps: "" }]);
     }
 
-    function renderTreino(index: number) {        
+    function finalizarTreino (index: number) {
+        try{
+            const id = uuid.v4();
+            const treino = [];
+
+
+            treino.push(treinos[index].exec, treinos[index].series, treinos[index].reps)            
+
+            const newTreino = {
+                id
+            }
+
+            console.log(newTreino);
+            
+        }catch(e) {
+            console.log(e);
+        }
+    }
+
+    function renderTreino(index: number) { 
+        console.log(treinos[index].exec);
+        console.log(treinos[index].series);
+        console.log(treinos[index].reps);
+              
         return (
             <View style={styles.mainTreino}>
                 <View style={styles.addTreino}>
@@ -105,17 +130,25 @@ export default function seusTreinos(){
                     <Logo/>
                 </View>
 
-                <View style={styles.container}>
-                    <View>
-                        <Text style={styles.textAdd}>Adicione os exercícios</Text>
+                <ScrollView>
+
+                    <View style={styles.container}>
+                        <View>
+                            <Text style={styles.textAdd}>Adicione os exercícios</Text>
+                        </View>
+
+                        {treinos.map((_, index) => renderTreino(index))}
+
+                        <Pressable style={styles.btnMais} onPress={outroTreino}>
+                            <Text style={styles.textMais}>+</Text>
+                        </Pressable>
+
+                        <Pressable style={styles.btnFinalizar} onPress={finalizarTreino}>
+                            <Text style={styles.textFinalizar}>Finalizar Treino</Text>
+                        </Pressable>
                     </View>
+                </ScrollView>
 
-                    {treinos.map((_, index) => renderTreino(index))}
-
-                    <Pressable style={styles.btnMais} onPress={outroTreino}>
-                        <Text style={styles.textMais}>+</Text>
-                    </Pressable>
-                </View>
 
             </>
         );
@@ -173,5 +206,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(187, 240, 37, 1)',
         marginTop: 20,
         borderRadius: 20
+    },
+
+    btnFinalizar: {
+
+    },
+
+    textFinalizar: {
+
     }
 });
