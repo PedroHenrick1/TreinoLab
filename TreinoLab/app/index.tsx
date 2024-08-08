@@ -8,7 +8,7 @@ export default function Index() {
   useEffect(() => {
     const checkUser = async () => {
       const user  = await AsyncStorage.getItem("@TreinoLab:users");
-      console.log(user);
+      // console.log(user);
       
       if (user !== null) {
         router.replace("/principal");
@@ -23,10 +23,10 @@ export default function Index() {
 
     const User = async () => {
       const user  = await AsyncStorage.getItem("@TreinoLab:users");
-      console.log(user);
+      // console.log(user);
     }
 
-    User();
+    // User();
 
 
     checkUser();
