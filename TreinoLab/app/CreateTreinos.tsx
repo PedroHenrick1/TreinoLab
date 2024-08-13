@@ -4,6 +4,7 @@ import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import * as Burnt from "burnt";
+import uuid from 'react-native-uuid';
 
 export default function seusTreinos(){
     let [fontsLoaded] = useFonts({
@@ -15,7 +16,8 @@ export default function seusTreinos(){
     const [series, setSeries] = useState("");
     const [reps, setReps] = useState("");
 
-    const [treinos, setTreinos] = useState([{exec:"", series:"", reps:""}]);
+    const [treinos, setTreinos] = useState([{}]);
+    const [idExec, setId] = useState(0);
 
     function outroTreino() {
         try{
@@ -27,13 +29,42 @@ export default function seusTreinos(){
                 Burnt.alert({
                     title: "Exercício adicionado com sucesso",
                 });
-                treinos.push({exec, series, reps});
+                setId(idExec + 1);
+                treinos.push({idExec, exec, series, reps});
             }
         }catch(e) {
             console.log(e);
         }
         console.log(treinos);
         
+    }
+
+    function finalizarTreino () {
+        try{
+            console.log(treinos.length);
+            
+
+            if (nomeTreino === "" || treinos.length === 1){
+                Burnt.alert({
+                    title: "Não é possível finalizar o treino, nenhum treino foi adicionado",
+                });
+            }else {
+                const id = uuid.v4();
+                const newData = {
+                    id,
+                    nomeTreino,
+                    treinos
+                }
+
+                console.log(newData);
+            }
+
+        }catch(e){
+            console.log(e);
+            Burnt.alert({
+                title: "Ocorreu um erro",
+            });
+        }
     }
 
 
@@ -80,8 +111,7 @@ export default function seusTreinos(){
                             style={styles.selector}
                             onValueChange={(itemValue, itemIndex) =>
                                 setSeries(itemValue)
-                            }
-                            >
+                            }>
                                 <Picker.Item label="Séries" value={""}/>
                                 <Picker.Item label="1" value={1}/>
                                 <Picker.Item label="2" value={2}/>
@@ -131,7 +161,7 @@ export default function seusTreinos(){
                         <Text style={styles.textMais}>+</Text>
                     </Pressable>
 
-                    <Pressable onPress={outroTreino}>
+                    <Pressable onPress={finalizarTreino}>
                         <Text>Finalizar Treino</Text>
                     </Pressable>
                 </View>
