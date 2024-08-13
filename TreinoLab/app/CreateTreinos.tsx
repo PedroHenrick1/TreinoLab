@@ -1,123 +1,39 @@
 import Logo from "@/components/logo";
-import {StyleSheet, View, Text, TextInput, Pressable, ScrollView } from "react-native";
+import {StyleSheet, View, Text, TextInput, Pressable } from "react-native";
 import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
-import uuid from 'react-native-uuid'
+import * as Burnt from "burnt";
 
 export default function seusTreinos(){
     let [fontsLoaded] = useFonts({
         JockeyOne_400Regular,
     });
+
+    const [nomeTreino, setNomeTreino] = useState("");
     const [exec, setExec] = useState("");
     const [series, setSeries] = useState("");
     const [reps, setReps] = useState("");
 
+    const [treinos, setTreinos] = useState([{exec:"", series:"", reps:""}]);
 
-    const [treinos, setTreinos] = useState([
-        { exec: "", series: "", reps: "" },
-      ]);
-    
-      function outroTreino() {
-        setTreinos([...treinos, { exec: "", series: "", reps: "" }]);
-    }
-
-    function finalizarTreino (index: number) {
+    function outroTreino() {
         try{
-            const id = uuid.v4();
-            const treino = [];
-
-
-            treino.push(treinos[index].exec, treinos[index].series, treinos[index].reps)            
-
-            const newTreino = {
-                id
+            if (exec === "" || series === "" || reps === "") {
+                Burnt.alert({
+                    title: "Não é possível adicionar o exercício, verifique se os campos estão vazios",
+                });
+            }else {
+                Burnt.alert({
+                    title: "Exercício adicionado com sucesso",
+                });
+                treinos.push({exec, series, reps});
             }
-
-            console.log(newTreino);
-            
         }catch(e) {
             console.log(e);
         }
-    }
-
-    function renderTreino(index: number) { 
-        console.log(treinos[index].exec);
-        console.log(treinos[index].series);
-        console.log(treinos[index].reps);
-              
-        return (
-            <View style={styles.mainTreino}>
-                <View style={styles.addTreino}>
-                    <TextInput 
-                        style={styles.inputLabel} 
-                        autoCorrect={false}
-                        autoCapitalize="none"
-                        placeholder="NOME" 
-                        onChangeText={(text) => {
-                        const newTreinos = [...treinos];
-                        newTreinos[index].exec = text;
-                        setTreinos(newTreinos);
-                        }}
-                        placeholderTextColor={"white"}
-                        value={treinos[index].exec}
-                    />
-                    <Picker
-                    selectedValue={series}
-                    style={styles.selector}
-                    onValueChange={(itemValue) => {
-                        const newTreinos = [...treinos];
-                        newTreinos[index].series = itemValue;
-                        setTreinos(newTreinos);
-                    }}
-                    >
-                        <Picker.Item label="Séries" value={""}/>
-                        <Picker.Item label="1" value={1}/>
-                        <Picker.Item label="2" value={2}/>
-                        <Picker.Item label="3" value={3}/>
-                        <Picker.Item label="4" value={4}/>
-                        <Picker.Item label="5" value={5}/>
-                        <Picker.Item label="6" value={6}/>
-                        <Picker.Item label="7" value={7}/>
-                        <Picker.Item label="8" value={8}/>
-                        <Picker.Item label="9" value={9}/>
-                        <Picker.Item label="10" value={10}/>
-                    </Picker>
-                    
-                    <Picker
-                    selectedValue={reps}
-                    style={styles.selector}
-                    onValueChange={(itemValue) => {
-                        const newTreinos = [...treinos];
-                        newTreinos[index].reps = itemValue;
-                        setTreinos(newTreinos);
-                    }}
-                    >
-                        <Picker.Item label="Repetições" value={""}/>
-                        <Picker.Item label="1" value={1}/>
-                        <Picker.Item label="2" value={2}/>
-                        <Picker.Item label="3" value={3}/>
-                        <Picker.Item label="4" value={4}/>
-                        <Picker.Item label="5" value={5}/>
-                        <Picker.Item label="6" value={6}/>
-                        <Picker.Item label="7" value={7}/>
-                        <Picker.Item label="8" value={8}/>
-                        <Picker.Item label="9" value={9}/>
-                        <Picker.Item label="10" value={10}/>
-                        <Picker.Item label="11" value={11}/>
-                        <Picker.Item label="12" value={12}/>
-                        <Picker.Item label="13" value={13}/>
-                        <Picker.Item label="14" value={14}/>
-                        <Picker.Item label="15" value={15}/>
-                        <Picker.Item label="16" value={16}/>
-                        <Picker.Item label="17" value={17}/>
-                        <Picker.Item label="18" value={18}/>
-                        <Picker.Item label="19" value={19}/>
-                        <Picker.Item label="20" value={20}/>
-                    </Picker>
-                </View>
-            </View>
-        )
+        console.log(treinos);
+        
     }
 
 
@@ -130,25 +46,95 @@ export default function seusTreinos(){
                     <Logo/>
                 </View>
 
-                <ScrollView>
+                <View style={styles.container}>
 
-                    <View style={styles.container}>
-                        <View>
-                            <Text style={styles.textAdd}>Adicione os exercícios</Text>
+                    <View>
+                        <Text style={styles.textAdd}>Adicione um nome ao seu Treino</Text>
+                        <View style={styles.inputTreino}>                        
+                            <TextInput 
+                                style={styles.inputLabel} 
+                                placeholder="Nome do treino" 
+                                onChangeText={setNomeTreino}
+                                placeholderTextColor={"white"}
+                            />
                         </View>
 
-                        {treinos.map((_, index) => renderTreino(index))}
-
-                        <Pressable style={styles.btnMais} onPress={outroTreino}>
-                            <Text style={styles.textMais}>+</Text>
-                        </Pressable>
-
-                        <Pressable style={styles.btnFinalizar} onPress={finalizarTreino}>
-                            <Text style={styles.textFinalizar}>Finalizar Treino</Text>
-                        </Pressable>
                     </View>
-                </ScrollView>
 
+                    <View>
+                        <Text style={styles.textAdd}>Adicione os exercícios</Text>
+                    </View>
+
+                    <View style={styles.mainTreino}>
+                        <View style={styles.addTreino}>
+                            <TextInput 
+                                style={styles.inputLabel} 
+                                autoCorrect={false}
+                                autoCapitalize="none"
+                                placeholder="NOME" 
+                                onChangeText={setExec}
+                                placeholderTextColor={"white"}
+                            />
+                            <Picker
+                            selectedValue={series}
+                            style={styles.selector}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setSeries(itemValue)
+                            }
+                            >
+                                <Picker.Item label="Séries" value={""}/>
+                                <Picker.Item label="1" value={1}/>
+                                <Picker.Item label="2" value={2}/>
+                                <Picker.Item label="3" value={3}/>
+                                <Picker.Item label="4" value={4}/>
+                                <Picker.Item label="5" value={5}/>
+                                <Picker.Item label="6" value={6}/>
+                                <Picker.Item label="7" value={7}/>
+                                <Picker.Item label="8" value={8}/>
+                                <Picker.Item label="9" value={9}/>
+                                <Picker.Item label="10" value={10}/>
+                            </Picker>
+                            
+                            <Picker
+                            selectedValue={reps}
+                            style={styles.selector}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setReps(itemValue)
+                            }
+                            >
+                                <Picker.Item label="Repetições" value={""}/>
+                                <Picker.Item label="1" value={1}/>
+                                <Picker.Item label="2" value={2}/>
+                                <Picker.Item label="3" value={3}/>
+                                <Picker.Item label="4" value={4}/>
+                                <Picker.Item label="5" value={5}/>
+                                <Picker.Item label="6" value={6}/>
+                                <Picker.Item label="7" value={7}/>
+                                <Picker.Item label="8" value={8}/>
+                                <Picker.Item label="9" value={9}/>
+                                <Picker.Item label="10" value={10}/>
+                                <Picker.Item label="11" value={11}/>
+                                <Picker.Item label="12" value={12}/>
+                                <Picker.Item label="13" value={13}/>
+                                <Picker.Item label="14" value={14}/>
+                                <Picker.Item label="15" value={15}/>
+                                <Picker.Item label="16" value={16}/>
+                                <Picker.Item label="17" value={17}/>
+                                <Picker.Item label="18" value={18}/>
+                                <Picker.Item label="19" value={19}/>
+                                <Picker.Item label="20" value={20}/>
+                            </Picker>
+                        </View>
+                    </View>
+
+                    <Pressable style={styles.btnMais} onPress={outroTreino}>
+                        <Text style={styles.textMais}>+</Text>
+                    </Pressable>
+
+                    <Pressable onPress={outroTreino}>
+                        <Text>Finalizar Treino</Text>
+                    </Pressable>
+                </View>
 
             </>
         );
@@ -206,13 +192,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(187, 240, 37, 1)',
         marginTop: 20,
         borderRadius: 20
-    },
-
-    btnFinalizar: {
-
-    },
-
-    textFinalizar: {
-
-    }
+    }, 
+    inputTreino: {
+        alignItems: 'center',
+        padding: 30
+    } 
 });
