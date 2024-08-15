@@ -1,12 +1,14 @@
 import Logo from "@/components/logo";
 import {StyleSheet, View, Text, TextInput, Pressable } from "react-native";
 import { useFonts, JockeyOne_400Regular } from '@expo-google-fonts/jockey-one';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import * as Burnt from "burnt";
 import uuid from 'react-native-uuid';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
-export default function seusTreinos(){
+export default function CreateTreinos(){
     let [fontsLoaded] = useFonts({
         JockeyOne_400Regular,
     });
@@ -17,9 +19,8 @@ export default function seusTreinos(){
     const [reps, setReps] = useState("");
 
     const [treinos, setTreinos] = useState([{}]);
-    const [idExec, setId] = useState(0);
 
-    function outroTreino() {
+    async function outroTreino() {
         try{
             if (exec === "" || series === "" || reps === "") {
                 Burnt.alert({
@@ -29,8 +30,22 @@ export default function seusTreinos(){
                 Burnt.alert({
                     title: "Exercício adicionado com sucesso",
                 });
-                setId(idExec + 1);
-                treinos.push({idExec, exec, series, reps});
+                const id = uuid.v4();
+                treinos.push({id, exec, series, reps});
+
+                let newData = {
+                    id,
+                    nomeTreino,
+                    treinos
+                }
+
+                await AsyncStorage.setItem("@TreinoLab:treinos", JSON.stringify(newData));
+
+                console.log(newData);
+
+                newData = {id: "", nomeTreino: "", treinos: []}
+
+                console.log(newData);
             }
         }catch(e) {
             console.log(e);
@@ -39,7 +54,7 @@ export default function seusTreinos(){
         
     }
 
-    function finalizarTreino () {
+    async function finalizarTreino () {
         try{
             console.log(treinos.length);
             
@@ -49,14 +64,15 @@ export default function seusTreinos(){
                     title: "Não é possível finalizar o treino, nenhum treino foi adicionado",
                 });
             }else {
-                const id = uuid.v4();
-                const newData = {
-                    id,
-                    nomeTreino,
-                    treinos
-                }
 
-                console.log(newData);
+                
+                Burnt.alert({
+                    title: "Treino adicionado com sucesso",
+                });
+
+                router.push("/principal");
+
+                
             }
 
         }catch(e){
@@ -67,6 +83,20 @@ export default function seusTreinos(){
         }
     }
 
+    const removeTreino = async () => {
+        const remove  = await AsyncStorage.removeItem("@TreinoLab:treinos");
+    }
+
+    //removeTreino();
+
+    const Treinos = async () => {
+        const treino  = await AsyncStorage.getItem("@TreinoLab:treinos");
+        console.log(treino);
+    }
+
+    useEffect(()=> {
+        Treinos();
+    },[outroTreino]);
 
     if (!fontsLoaded) {
         return
@@ -79,12 +109,15 @@ export default function seusTreinos(){
 
                 <View style={styles.container}>
 
-                    <View>
-                        <Text style={styles.textAdd}>Adicione um nome ao seu Treino</Text>
+                    <View style={styles.containerAdd}>
+                        <View>
+                            <Text style={styles.textAdd}>Adicione um nome ao seu Treino</Text>
+                        </View>
+                        
                         <View style={styles.inputTreino}>                        
                             <TextInput 
-                                style={styles.inputLabel} 
-                                placeholder="Nome do treino" 
+                                style={styles.inputNomeTreino} 
+                                placeholder="Nome do Treino"
                                 onChangeText={setNomeTreino}
                                 placeholderTextColor={"white"}
                             />
@@ -102,7 +135,7 @@ export default function seusTreinos(){
                                 style={styles.inputLabel} 
                                 autoCorrect={false}
                                 autoCapitalize="none"
-                                placeholder="NOME" 
+                                placeholder="Nome do exercício" 
                                 onChangeText={setExec}
                                 placeholderTextColor={"white"}
                             />
@@ -162,7 +195,13 @@ export default function seusTreinos(){
                     </Pressable>
 
                     <Pressable onPress={finalizarTreino}>
-                        <Text>Finalizar Treino</Text>
+                        <View >
+                            <View style={styles.buttons}>
+                                <Text style={styles.textButtons}>Finalizar Treino</Text>
+                            </View>
+
+                        </View>
+
                     </Pressable>
                 </View>
 
@@ -180,7 +219,8 @@ const styles = StyleSheet.create({
 
     container: {
         justifyContent: 'center', 
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 30
     },
 
     inputLabel: {
@@ -189,7 +229,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         height: 40,
         width: 200,
+        shadowRadius: 10, 
+        padding: 10
     },
+
+    inputNomeTreino: {
+        backgroundColor: '#838695', 
+        color: 'white',
+        borderRadius: 10,
+        height: 40,
+        width: 300,
+        shadowRadius: 10, 
+        padding: 10
+    },
+
 
     addTreino: {
         alignItems: 'center'
@@ -202,7 +255,8 @@ const styles = StyleSheet.create({
     },
 
     btnMais: {
-        marginTop: 50,
+        marginTop: 30,
+        marginBottom: 30,
         width: 70,
         height: 70,
         justifyContent: 'center',
@@ -221,10 +275,31 @@ const styles = StyleSheet.create({
         padding: 40,
         backgroundColor: 'rgba(187, 240, 37, 1)',
         marginTop: 20,
-        borderRadius: 20
+        borderRadius: 20,
+        elevation: 20,
+        shadowColor: "black"
     }, 
     inputTreino: {
         alignItems: 'center',
         padding: 30
-    } 
+    },
+    
+    buttons: {
+        backgroundColor: "#6AEBAD",
+        width: 200,
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20
+    },
+
+    textButtons: {
+        fontFamily: 'JockeyOne_400Regular',
+        color: 'black',
+        fontSize: 26,
+    },
+
+    containerAdd: {
+        alignItems: 'center'
+    }
 });
